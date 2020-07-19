@@ -6,11 +6,16 @@
 *-----------------------------------------------------------
     ORG    $1000
 START:                  ; first instruction of program
-
+    ** SET DRAWING PROPERTIES
     move.l  #$00FFFFFF,D1 ; pen color choice (white)
     move    #80,D0         ; set trap
     trap    #15            ; set pen color
     
+    move.l  #$000000FF,D1 ; fill color choice (red)
+    move #81,D0
+    trap #15
+
+
     *initialize rectangle pos
     move.w #50, D1 ; x1
     move.w #120, D3 ; x2
@@ -47,7 +52,7 @@ loop_left:
 
 draw_rect:    
     jsr cls
-    move    #90,D0         ; unfilled rect trap
+    move    #87,D0         ; filled rect trap
     trap    #15     ; draw rectangle
     jsr delay
     rts
@@ -69,7 +74,7 @@ delay:
     move D1,D7
     
     **execute delay trap**
-    move.l #20,D1
+    move.l #2,D1 ; set time in 1/100 second
     trap #15
     
     **restore D1**
