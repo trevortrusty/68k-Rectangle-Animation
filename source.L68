@@ -1,0 +1,107 @@
+00001000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 7/19/2020 5:08:10 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      :
+00000000                             3  * Written by :
+00000000                             4  * Date       :
+00000000                             5  * Description:
+00000000                             6  *-----------------------------------------------------------
+00001000                             7      ORG    $1000
+00001000                             8  START:                  ; first instruction of program
+00001000                             9  
+00001000  223C 00FFFFFF             10      move.l  #$00FFFFFF,D1 ; pen color choice (white)
+00001006  303C 0050                 11      move    #80,D0         ; set trap
+0000100A  4E4F                      12      trap    #15            ; set pen color
+0000100C                            13      
+0000100C                            14      *initialize rectangle pos
+0000100C  323C 0032                 15      move.w #50, D1 ; x1
+00001010  363C 0078                 16      move.w #120, D3 ; x2
+00001014  343C 0032                 17      move.w #50, D2 ; y1
+00001018  383C 0078                 18      move.w #120, D4 ; y2
+0000101C                            19      
+0000101C                            20      *begin animation
+0000101C                            21      ;jsr draw_rect
+0000101C                            22      ;jsr move_right
+0000101C                            23      ;jsr draw_rect
+0000101C                            24      ;jsr move_right
+0000101C                            25      ;jsr draw_rect
+0000101C                            26      ;jsr move_right
+0000101C                            27      ;jsr draw_rect
+0000101C                            28      ;jsr move_right
+0000101C                            29      ;jsr draw_rect
+0000101C  4EF9 00001026             30      jmp loop_right
+00001022                            31      
+00001022  FFFF FFFF                 32      SIMHALT             ; halt simulator
+00001026                            33  
+00001026                            34  loop_right:
+00001026  4EB9 00001054             35      jsr draw_rect
+0000102C  4EB9 00001068             36      jsr move_right
+00001032  B27C 01F4                 37      cmp #500,D1
+00001036  6C00 0006                 38      BGE loop_left
+0000103A  4EF8 1026                 39      jmp loop_right
+0000103E                            40      
+0000103E                            41  loop_left:
+0000103E  4EB9 00001054             42      jsr draw_rect
+00001044  4EB9 00001072             43      jsr move_left
+0000104A  B27C 0032                 44      cmp #50,D1
+0000104E  6FD6                      45      BLE loop_right
+00001050  4EF8 103E                 46      jmp loop_left
+00001054                            47  
+00001054                            48  draw_rect:    
+00001054  4EB9 0000108A             49      jsr cls
+0000105A  303C 005A                 50      move    #90,D0         ; unfilled rect trap
+0000105E  4E4F                      51      trap    #15     ; draw rectangle
+00001060  4EB9 0000107C             52      jsr delay
+00001066  4E75                      53      rts
+00001068                            54      
+00001068                            55  move_right:
+00001068  0641 0014                 56      add #20,D1
+0000106C  0643 0014                 57      add #20,D3
+00001070  4E75                      58      rts
+00001072                            59      
+00001072                            60  move_left:
+00001072  0441 0014                 61      sub #20,D1
+00001076  0443 0014                 62      sub #20,D3
+0000107A  4E75                      63      rts
+0000107C                            64  
+0000107C                            65  delay:
+0000107C  303C 0017                 66      move #23,D0
+00001080                            67      
+00001080                            68      **backup D1**
+00001080  3E01                      69      move D1,D7
+00001082                            70      
+00001082                            71      **execute delay trap**
+00001082  7214                      72      move.l #20,D1
+00001084  4E4F                      73      trap #15
+00001086                            74      
+00001086                            75      **restore D1**
+00001086  2207                      76      move.l D7,D1    
+00001088  4E75                      77      rts
+0000108A                            78  
+0000108A                            79  cls:
+0000108A  303C 000B                 80      move #11,D0
+0000108E  3C01                      81      move D1,D6 ; temp backup D1
+00001090  323C FF00                 82      move.w #$FF00,D1 
+00001094  4E4F                      83      trap #15
+00001096  3206                      84      move D6,D1 ; restore D1
+00001098  4E75                      85      rts
+0000109A                            86     
+0000109A                            87      END    START        ; last line of source
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+CLS                 108A
+DELAY               107C
+DRAW_RECT           1054
+LOOP_LEFT           103E
+LOOP_RIGHT          1026
+MOVE_LEFT           1072
+MOVE_RIGHT          1068
+START               1000
